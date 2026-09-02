@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="pagehead"><h2>↩️ Sale Return</h2><a class="btn secondary" href="{{url_for('sales')}}">Back</a></div>
+<form class="formbox" method="post">
+<p><b>Customer:</b> {{sale['customer']}}</p>
+<p><b>Item:</b> {{sale['item']}} ({{sale['unit']}})</p>
+<p><b>Sold Quantity:</b> {{sale['qty']}}</p>
+<p><b>Rate:</b> ₹{{'%.2f'|format(sale['price'])}}</p>
+<label>Return Quantity</label><input name="qty" type="number" step="any" min="0.001" max="{{sale['qty']}}" required>
+<div class="form-actions"><button class="btn danger" type="submit">↩️ Process Return</button><a class="btn secondary" href="{{url_for('sales')}}">Back to Sales</a></div>
+</form>
+{% endblock %}

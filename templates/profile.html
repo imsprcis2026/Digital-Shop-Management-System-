@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block content %}
+{% if not profile %}
+<div class="auth account-screen">
+  <section class="authbox account-choice-box">
+    <h1>Account</h1>
+    <p class="desc">Login to use your existing shop account or create a new one.</p>
+    <div class="auth-choices">
+      <a class="btn" href="{{url_for('login', mode='login', next='profile')}}">🔐 Login Account</a>
+      <a class="btn" href="{{url_for('signup', mode='signup', next='profile')}}">✨ Create a New Account</a>
+    </div>
+    <a class="btn secondary full account-back" href="{{url_for('dashboard')}}">← Back</a>
+  </section>
+</div>
+{% else %}
+<div class="pagehead"><h2>👤 Profile</h2><a class="btn secondary" href="{{ url_for('dashboard') }}">← Back</a></div>
+
+<section class="formbox profile-box">
+  <h3 class="form-title">🏪 Shop Details</h3>
+  <div class="profile-logo-small">
+    {% if profile['logo'] %}<img src="{{ url_for('uploads',name=profile['logo']) }}" alt="Shop Logo">{% else %}<span>No Logo</span>{% endif %}
+  </div>
+  <div class="profile-details">
+    <div><span>Shop Name</span><b>{{profile['shop_name']}}</b></div>
+    <div><span>Contact</span><b>{{profile['contact'] or 'Not added'}}</b></div>
+    <div><span>Address</span><b>{{profile['address'] or 'Not added'}}</b></div>
+  </div>
+  <a class="btn primary" href="{{url_for('profile_edit')}}">✏️ Edit Shop Details</a>
+</section>
+
+<section class="formbox profile-box">
+  <h3 class="form-title">🔐 Account Details</h3>
+  <div class="profile-details">
+    <div><span>Username</span><b>{{profile['username']}}</b></div>
+    <div><span>Password</span><b>••••••••</b></div>
+  </div>
+  <button class="btn primary" type="button" id="change-password-toggle" onclick="toggleChangePassword()">🔑 Change Password</button>
+</section>
+
+<div class="formbox change-password-box" id="change-password" hidden>
+  <h3 class="form-title">🔑 Change Password</h3>
+  <form method="post" action="{{ url_for('change_password') }}">
+    <label>Current Password</label><input name="old" type="password" required>
+    <label>New Password <span class="muted-note">(minimum 6 characters)</span></label><input name="new" type="password" minlength="6" required>
+    <label>Confirm New Password</label><input name="confirm_new" type="password" minlength="6" required>
+    <div class="inline form-actions"><button class="btn primary" type="submit">✓ Change Password</button><a class="btn secondary" href="{{url_for('profile')}}">← Back</a></div>
+  </form>
+</div>
+
+<div class="inline profile-bottom-actions"><a class="btn secondary" href="{{url_for('dashboard')}}">← Back</a></div>
+{% endif %}
+{% endblock %}

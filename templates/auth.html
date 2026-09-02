@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Account | Digital Shop Management System</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body
+  data-selected-language="{{ request.cookies.get('dims_language', 'en') }}"
+  class="auth {{ request.cookies.get('dims_theme', 'dark') }} color-{{ request.cookies.get('dims_color', 'blue') }}"
+>
+  <!-- Language selection is intentionally kept only inside Settings. -->
+  <section class="authbox">
+    <h1>Digital Shop Management System</h1>
+    <p class="desc">Manage your shop account securely and simply.</p>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for category, message in messages %}
+        <div class="flash {{ category }}">{{ message }}</div>
+      {% endfor %}
+    {% endwith %}
+
+    <div class="auth-form">
+      {% if mode == 'login' %}
+        <h2>🔐 Login Account</h2>
+        <form method="post" action="{{ url_for('login', next=next_page) }}">
+          <label for="username">Username</label>
+          <input id="username" name="username" autocomplete="username" placeholder="Enter username" required>
+
+          <label for="password">Password</label>
+          <input id="password" name="password" type="password" minlength="6" autocomplete="current-password" placeholder="Enter password" required>
+
+          {% if next_page %}
+            <input type="hidden" name="next" value="{{ next_page }}">
+          {% endif %}
+
+          <button class="btn full" type="submit">🔐 Login Account</button>
+        </form>
+      {% else %}
+        <h2>✨ Create a New Account</h2>
+        <form method="post" action="{{ url_for('signup', next=next_page) }}">
+          <label for="shop_name">Shop Name</label>
+          <input id="shop_name" name="shop_name" placeholder="Enter shop name" required>
+
+          <label for="new_username">Username</label>
+          <input id="new_username" name="username" placeholder="Create username" required>
+
+          <label for="new_password">Password</label>
+          <input id="new_password" name="password" type="password" minlength="6" placeholder="Minimum 6 characters" required>
+
+          <label for="confirm_password">Confirm Password</label>
+          <input id="confirm_password" name="confirm_password" type="password" minlength="6" placeholder="Confirm password" required>
+
+          {% if next_page %}
+            <input type="hidden" name="next" value="{{ next_page }}">
+          {% endif %}
+
+          <button class="btn full" type="submit">✨ Create a New Account</button>
+        </form>
+      {% endif %}
+
+      <a class="btn secondary full" href="{{ url_for('profile') }}">← Back</a>
+    </div>
+  </section>
+
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

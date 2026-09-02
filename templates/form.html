@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="pagehead">
+  <h2>{% if page=='add_stock' %}➕ Add Stock{% elif page=='edit_stock' %}✏️ Edit Purchase{% elif page=='edit_current_stock' %}✏️ Edit Current Stock{% elif page=='add_sale' %}🧾 Add Sale{% else %}✏️ Edit Sale{% endif %}</h2>
+  <a class="btn secondary" href="{{url_for('dashboard')}}">Back</a>
+</div>
+
+<form class="formbox" method="post">
+<input type="hidden" name="device_date" id="device-date"><input type="hidden" name="device_time" id="device-time">
+
+{% if 'stock' in page %}
+<label>Supplier Name</label>
+<input name="supplier" value="{{record['supplier'] if record else ''}}" placeholder="Enter supplier name">
+
+<label>Supplier Contact</label>
+<input name="supplier_contact" value="{{record['supplier_contact'] if record and 'supplier_contact' in record.keys() else ''}}" placeholder="Enter supplier contact">
+
+<label>Item Name *</label>
+<input name="item" value="{{record['item'] if record else ''}}" required>
+
+<label>Quantity *</label>
+<input name="qty" type="number" step="any" min="0" value="{{record['qty'] if record else ''}}" required>
+
+<label>Unit *</label>
+<select name="unit" id="stock-unit" onchange="toggleCustomUnit()">
+{% for u in units %}<option value="{{u}}" {% if record and record['unit']==u %}selected{% endif %}>{{u}}</option>{% endfor %}
+</select>
+
+<div id="custom-unit-box" class="hidden-field"><label>Custom Unit</label><input name="custom_unit"></div>
+
+<label>Buying Price (per unit)</label>
+<input name="buy_price" type="number" step="any" min="0" value="{{record['buy_price'] if record else ''}}">
+
+<label>Selling Price (per unit)</label>
+<input name="sell_price" type="number" step="any" min="0" value="{{record['sell_price'] if record else ''}}">
+
+<label>Low Stock Limit</label>
+<input name="low_limit" type="number" step="any" min="0" value="{{record['low_limit'] if record else ''}}">
+
+<div class="form-actions">
+  <button class="btn primary" type="submit">💾 {% if page=='edit_current_stock' %}Update Stock{% else %}Save Stock{% endif %}</button>
+  <a class="btn secondary" href="{{url_for('stock' if page=='edit_current_stock' else ('purchase_history' if page=='edit_stock' else 'home'))}}">Back</a>
+</div>
+
+{% else %}
+<label>Customer Name *</label>
+<input name="customer" value="{{record['customer'] if record else ''}}" required>
+
+<label>Customer Contact</label>
+<input name="contact" value="{{record['contact'] if record else ''}}">
+
+<h3 class="form-title">Items</h3>
+<div id="sale-items">
+{% set count=record_items|length if record_items else 1 %}
+{% for i in range(count) %}
+<div class="row-item">
+  <div><label>Item</label><select name="item[]" class="item-select" required onchange="setRowPrice(this.closest('.row-item'))"><option value="">Select item</option>{% for x in items %}<option value="{{x['item']}}" data-unit="{{x['unit']}}" data-price="{{x['price']}}" {% if record_items and record_items[i]['item']==x['item'] %}selected{% endif %}>{{x['item']}} ({{x['unit']}})</option>{% endfor %}</select></div>
+  <div><label>Unit</label><input class="unit-output" name="unit[]" value="{{record_items[i]['unit'] if record_items else ''}}" readonly></div>
+  <div><label>Qty</label><input class="qty-input" name="qty[]" type="number" step="any" min="0.001" value="{{record_items[i]['qty'] if record_items else ''}}" required></div>
+  <div><label>Price</label><input class="price-input" name="price[]" type="number" step="any" value="{{record_items[i]['price'] if record_items else ''}}" readonly></div>
+  <div><label>Total</label><input class="line-total" value="{{record_items[i]['total'] if record_items else '0.00'}}" readonly><button type="button" class="remove-item" onclick="removeSaleRow(this)">×</button></div>
+</div>
+{% endfor %}
+</div>
+
+<div class="form-actions">
+  <button type="button" class="btn add-item" onclick="addSaleRow()">＋ Add Another Item</button>
+</div>
+
+<div class="summary-box">
+<label>Grand Total</label><input id="grand-total" value="0.00" readonly>
+<label>Paid Amount</label><input name="paid" id="paid" type="number" step="any" min="0" value="{{record['paid'] if record else '0'}}" oninput="calcSaleTotal()">
+<label>Remaining Amount</label><input id="remaining" value="0.00" readonly>
+</div>
+
+<div class="form-actions">
+  <button class="btn primary" type="submit">💾 Save & Show Bill</button>
+  <a class="btn secondary" href="{{url_for('dashboard')}}">Back to Dashboard</a>
+</div>
+{% endif %}
+</form>
+{% endblock %}

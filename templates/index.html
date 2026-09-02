@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="hero dashboard-hero">
+  <h2>🏠 Dashboard</h2>
+</section>
+
+<!-- Main dashboard summary cards -->
+<section class="cards dashboard-cards">
+  <a class="card dashboard-card" href="{{ url_for('sales_report') }}">
+    <span class="card-label">Today's Sales</span>
+    <strong class="card-value">₹ {{ '%.2f'|format(sales) }}</strong>
+  </a>
+
+  <a class="card dashboard-card" href="{{ url_for('pending') }}">
+    <span class="card-label">Pending Payments</span>
+    <strong class="card-value">₹ {{ '%.2f'|format(pending) }}</strong>
+  </a>
+
+  <a class="card dashboard-card report-card" href="{{ url_for('stock_report') }}">
+    <span class="card-label">Stock Report</span>
+    <strong class="card-action-text">Open Report</strong>
+  </a>
+
+  <a class="card dashboard-card report-card" href="{{ url_for('sales_report') }}">
+    <span class="card-label">Sales Report</span>
+    <strong class="card-action-text">Open Report</strong>
+  </a>
+</section>
+
+<!-- Quick actions -->
+<section class="quick">
+  <a class="btn" href="{{ url_for('add_stock') }}">➕ Add Stock</a>
+  <a class="btn" href="{{ url_for('stock') }}">📦 View Stock</a>
+  <a class="btn" href="{{ url_for('add_sale') }}">🧾 Add Sale</a>
+  <a class="btn" href="{{ url_for('sales') }}">📋 View Sales</a>
+  <a class="btn" href="{{ url_for('payments') }}">💳 Payment History</a>
+  <a class="btn" href="{{ url_for('customer_history') }}">👤 Customer History</a>
+  <a class="btn" href="{{ url_for('purchase_history') }}">🏭 Purchase History</a>
+</section>
+
+{% if low %}
+  <div class="alert">
+    <b>⚠️ Low Stock:</b>
+    {% for item in low %}
+      {{ item['item'] }} ({{ item['qty'] }} {{ item['unit'] }}){% if not loop.last %}, {% endif %}
+    {% endfor %}
+  </div>
+{% endif %}
+{% endblock %}

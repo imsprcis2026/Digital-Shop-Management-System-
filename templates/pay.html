@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="pagehead"><h2>Pay Pending Amount</h2><a class="btn secondary" href="{{ url_for('sales') }}">Back</a></div>
+<form class="formbox" method="post">
+    <input type="hidden" name="device_date" id="device-date"><input type="hidden" name="device_time" id="device-time">
+    <label>Customer Name</label><input value="{{ sale['customer'] }}" disabled>
+    <label>Remaining Amount</label><input value="₹ {{ '%.2f'|format(sale['remaining']) }}" disabled>
+    <label>Payment Amount</label><input name="amount" type="number" step="any" min="0.01" max="{{ sale['remaining'] }}" placeholder="Enter payment received" required>
+    <div class="form-actions">
+      <button class="btn primary" type="submit">Save Payment</button>
+      <a class="btn secondary" href="{{ url_for('sales') }}">Back to View Sales</a>
+    </div>
+</form>
+{% endblock %}

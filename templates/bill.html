@@ -1,0 +1,9 @@
+{% extends 'base.html' %}{% block content %}
+<div class="billbox">
+<div class="billhead">{% if user['logo'] %}<img src="{{url_for('uploads',name=user['logo'])}}">{% endif %}<div><h2>{{user['shop_name']}}</h2>{% if user['contact'] %}<p>Contact: {{user['contact']}}</p>{% endif %}{% if user['address'] %}<p>Address: {{user['address']}}</p>{% endif %}</div></div><hr>
+<div class="bill-title-row"><h2>Bill No. {{'%02d'|format(bill['bill_no'])}}</h2><span>{{bill['date']}} · {{bill['time']}}</span></div>
+<div class="bill-customer"><p>Customer: <b>{{bill['customer']}}</b></p><p>Contact: <b>{{bill['contact'] or '—'}}</b></p></div>
+<div class="bill-table-wrap"><table class="bill-table"><thead><tr><th>Item</th><th>Unit</th><th>Qty</th><th>Rate</th><th>Total</th></tr></thead><tbody>{% for x in items %}<tr><td class="bill-item">{{x['item']}}</td><td>{{x['unit']}}</td><td>{{x['qty']}}</td><td>₹{{'%.2f'|format(x['price'])}}</td><td>₹{{'%.2f'|format(x['total'])}}</td></tr>{% endfor %}</tbody></table></div>
+<div class="billtot"><p>Grand Total: ₹{{'%.2f'|format(bill['total'])}}</p><p>Paid: ₹{{'%.2f'|format(bill['paid'])}}</p><p>Remaining: ₹{{'%.2f'|format(bill['remaining'])}}</p></div>
+<div class="billactions"><button class="btn" onclick="window.print()">🖨️ Print Bill</button><a class="btn secondary" href="{{url_for('dashboard')}}">Back</a></div>
+</div>{% endblock %}

@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="pagehead"><h2>✏️ Edit Shop Details</h2><a class="btn secondary" href="{{url_for('profile')}}">← Back</a></div>
+<form class="formbox" method="post" enctype="multipart/form-data">
+  <label>Shop Name</label><input name="shop_name" value="{{profile['shop_name']}}" required>
+  <label>Contact</label><input name="contact" value="{{profile['contact']}}" placeholder="Enter contact number">
+  <label>Address</label><textarea name="address" placeholder="Enter shop address">{{profile['address']}}</textarea>
+  <label>Shop Logo</label>
+  <input id="logo-input" class="file-input-hidden" type="file" name="logo" accept="image/png,image/jpeg,image/webp" onchange="previewLogo(this)">
+  <label class="file-picker" for="logo-input">🖼️ Choose Image</label>
+  <div id="logo-name" class="file-name">{% if profile['logo'] %}Current image: {{profile['logo']}}{% else %}No image selected{% endif %}</div>
+  <div class="logo-preview" id="logo-preview-box">{% if profile['logo'] %}<img id="logo-preview" src="{{url_for('uploads',name=profile['logo'])}}" alt="Shop Logo">{% else %}<span id="logo-empty">Select an image to see the preview.</span><img id="logo-preview" alt="Shop Logo" style="display:none">{% endif %}</div>
+  <div class="inline form-actions"><button class="btn primary" type="submit">💾 Save Details</button><a class="btn secondary" href="{{url_for('profile')}}">← Back</a></div>
+</form>
+{% endblock %}

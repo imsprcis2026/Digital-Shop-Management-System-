@@ -1,0 +1,9 @@
+{% extends 'base.html' %}{% block content %}
+<div class="pagehead"><h2>👤 Customer History</h2><a class="btn secondary" href="{{url_for('dashboard')}}">← Back</a></div>
+<form class="search search-with-button" method="get"><div class="search-box"><input name="q" value="{{q or ''}}" placeholder="Search" autocomplete="off"></div><button class="search-inside" type="submit" aria-label="Search">Search</button></form>
+{% if customer %}
+<div class="totals customer-summary"><div><b>Customer</b><br>{{customer}}</div><div><b>Total Items</b><br>{{summary['items']}}</div><div><b>Total Purchase</b><br>₹{{'%.2f'|format(summary['total'])}}</div><div><b>Total Paid</b><br>₹{{'%.2f'|format(summary['paid'])}}</div><div><b>Total Remaining</b><br>₹{{'%.2f'|format(summary['remaining'])}}</div></div>
+<div class="tablewrap list-container"><table class="responsive-table customer-table"><thead><tr><th>Date</th><th>Bill No.</th><th>Item</th><th>Qty</th><th>Unit</th><th>Total</th><th>Paid</th><th>Remaining</th></tr></thead><tbody>
+{% set ns = namespace(last_date='') %}{% for r in rows %}{% if r['date'] != ns.last_date %}<tr class="date-group-row"><td colspan="8">📅 {{r['date']}}</td></tr>{% set ns.last_date = r['date'] %}{% endif %}<tr><td>{{r['date']}}</td><td>{{'%02d'|format(r['bill_no'])}}</td><td class="wrap-cell">{{r['item']}}</td><td>{{r['qty']}}</td><td>{{r['unit']}}</td><td>₹{{'%.2f'|format(r['total'])}}</td><td>₹{{'%.2f'|format(r['paid'])}}</td><td>₹{{'%.2f'|format(r['remaining'])}}</td></tr>{% endfor %}
+</tbody></table></div>
+{% else %}<div class="empty">Search a customer to view complete item-wise history.</div>{% endif %}{% endblock %}

@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="pagehead"><h2>{% if kind=='stock' %}📦 Stock Report{% else %}📈 Sales Report{% endif %}</h2><a class="btn secondary" href="{{url_for('dashboard')}}">← Back</a></div>
+<form class="filters report-filters" method="get">
+  <div class="choose-date-box"><label>📅 Choose Date</label><select name="range" id="report-range" onchange="this.form.submit()">
+    <option value="today" {% if rng=='today' %}selected{% endif %}>Today</option>
+    <option value="yesterday" {% if rng=='yesterday' %}selected{% endif %}>Yesterday</option>
+    <option value="week" {% if rng=='week' %}selected{% endif %}>Last 7 Days</option>
+    <option value="month" {% if rng=='month' %}selected{% endif %}>This Month</option>
+    <option value="last_month" {% if rng=='last_month' %}selected{% endif %}>Last Month</option>
+    <option value="custom" {% if rng=='custom' %}selected{% endif %}>Choose Specific Date</option>
+  </select></div>
+  {% if rng=='custom' %}<div class="choose-date-box"><label>Specific Date</label><input type="date" name="date" value="{{date}}"></div><button class="btn primary report-show" type="submit">Show Report</button>{% endif %}
+</form>
+{% if low %}<div class="alert"><b>⚠️ Low Stock:</b> {% for x in low %}{{x['item']}} ({{x['available']}} {{x['unit']}}){% if not loop.last %}, {% endif %}{% endfor %}</div>{% endif %}
+<div class="report-summary"><span>Total Items = <b>{{total_items}}</b></span></div>
+<div class="tools"><button class="btn primary" type="button" onclick="window.print()">🖨️ Print / Save PDF</button><a class="btn primary" href="{{url_for('export',kind=kind,range=rng,week=week,month=month,date=date)}}">⬇️ Export CSV</a></div>
+<div class="tablewrap list-container">
+<table class="report-table"><thead>{% if kind=='stock' %}<tr><th>Sr. No.</th><th>Item Name</th><th>Unit</th><th>Price / Unit</th><th>Available Stock</th><th>Limit</th><th>Status</th></tr>{% else %}<tr><th>Sr. No.</th><th>Item Name</th><th>Unit</th><th>Price / Unit</th><th>Total Price</th><th>Profit</th></tr>{% endif %}</thead><tbody>
+{% for r in rows %}{% if kind=='stock' %}<tr class="{% if r['status']=='Low Stock' %}lowrow{% elif r['status']=='Out of Stock' %}outrow{% endif %}"><td>{{loop.index}}</td><td class="wrap-cell">{{r['item']}}</td><td>{{r['unit']}}</td><td>₹{{'%.2f'|format(r['price'])}}</td><td><b>{{r['available']}}</b></td><td>{{r['limit_qty']}}</td><td><span class="status-badge status-{{r['status'].replace(' ','-').lower()}}">{{r['status']}}</span></td></tr>{% else %}<tr><td>{{loop.index}}</td><td class="wrap-cell">{{r['item']}}</td><td>{{r['unit']}}</td><td>₹{{'%.2f'|format(r['price'])}}</td><td>₹{{'%.2f'|format(r['total'])}}</td><td>₹{{'%.2f'|format(r['profit'])}}</td></tr>{% endif %}{% else %}<tr><td colspan="7" class="empty">No sold items found for this date.</td></tr>{% endfor %}
+</tbody></table></div>
+{% if kind=='sales' %}<div class="totals"><div>Total Price<br><b>₹{{'%.2f'|format(total)}}</b></div><div>Total Profit<br><b>₹{{'%.2f'|format(profit)}}</b></div></div>{% endif %}
+{% endblock %}
